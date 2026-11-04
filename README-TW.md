@@ -5,3 +5,9 @@
   - 安裝: `./scripts/install-packages.sh fisher`（沒有 fish 會一併裝）
   - 設定目錄裡已有、但不是 fisher 裝的外掛檔案，會先移到 `~/.config/fish/fisher-backup-*/` 再重裝
   - 新增外掛: `fisher install <plugin>`，會自動寫回 `fish_plugins`，記得 commit
+- SSH（讓 `git push` 不用一直輸入金鑰密碼）
+  - `.zshrc` 用固定 socket `~/.ssh/agent.sock` 跑一個 ssh-agent，所有終端機（含 Claude Code）共用同一個
+    - 判斷 `ssh-add -l` 離開碼：0 有金鑰、1 agent 在但沒金鑰、2 連不到；只有 2 才新開，避免砍掉已在跑的 agent
+  - `~/.ssh/config` 的 `Host github.com` 加 `AddKeysToAgent yes`，第一次連線會自動把金鑰載入 agent
+  - 新機器設定：在**真終端機**（不是 Claude Code 的 `!`）跑一次 `git push` 或 `ssh -T git@github.com`，輸入一次金鑰密碼，之後整個登入階段、所有終端機都免密碼
+  - `~/.ssh/config` 不進 repo，新機器要自行建立；github 用的金鑰是 `~/.ssh/fanice`
