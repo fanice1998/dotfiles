@@ -1,0 +1,57 @@
+theme = "term16-dark"
+
+[editor]
+line-number = "relative"
+bufferline = "multiple"
+
+[editor.cursor.shape]
+normal = "block"
+insert = "bar"
+select = "underline"
+
+[editor.whitespace.render]
+space = "trailing"
+tab = "all"
+
+[editor.whitespace.characters]
+tab = "→"
+tabpad = "·"
+
+[editor.soft-wrap]
+enable = true
+wrap-indicator = "↪ "
+
+[editor.statusline]
+left = ["mode", "file-name", "file-modification-indicator", "spinner"]
+right = ["read-only-indicator", "code-action-hint", "register", "branch", "search-position", "diagnostics", "position", "file-type"]
+mode.normal = "NOR"
+mode.insert = "INS"
+mode.select = "SEL"
+
+
+
+[editor.breadcrumb]
+enable = true
+path = "full"
+
+[editor.indent-guides]
+render = true
+character = "|"
+skip-levels = 1
+
+[editor.inline-blame]
+# {author} / {emaol}
+# {data / {time-ago}}
+# {title} / {body}
+# {commit}
+show = "cursor-line"
+
+[editor.diff]
+engine = "syntax"
+
+[editor.file-picker]
+max-depth = 3
+
+[keys.normal]
+C-s = ":write"
+

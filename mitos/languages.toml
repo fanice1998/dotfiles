@@ -1,0 +1,144 @@
+# --- Go ---
+[language-server.gopls]
+command = "gopls"
+
+[[language]]
+name = "go"
+scope = "source.go"
+file-types = ["go"]
+auto-format = true
+language-servers = ["gopls"]
+
+# --- JSON ---
+[language-server.vscode-json-language-server]
+command = "vscode-json-language-server"
+args = ["--stdio"]
+
+[[language]]
+name = "json"
+scope = "source.json"
+file-types = ["json"]
+language-servers = ["vscode-json-language-server"]
+
+# --- Markdown ---
+[language-server.marksman]
+command = "marksman"
+args = ["server"]
+
+[[language]]
+name = "markdown"
+scope = "source.md"
+file-types = ["md", "markdown"]
+language-servers = ["marksman"]
+
+# --- Rust ---
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[[language]]
+name = "rust"
+scope = "source.rust"
+file-types = ["rs"]
+language-servers = ["rust-analyzer"]
+
+# --- PHP 7.3 vs PHP 8.4 Toggle ---
+[language-server.intelephense-73]
+command = "intelephense"
+args = ["--stdio"]
+config = { intelephense = { environment = { phpVersion = "7.3" } } }
+
+[language-server.intelephense-84]
+command = "intelephense"
+args = ["--stdio"]
+config = { intelephense = { environment = { phpVersion = "8.4" } } }
+
+[[language]]
+name = "php"
+scope = "source.php"
+file-types= ["php", "phtml"]
+language-servers = ["intelephense-73"]
+
+# --- CSV & TSV ---
+[language-server.csv-lsp]
+command = "csv-language-server"
+args = ["--stdio"]
+
+[[language]]
+name = "csv"
+scope = "text.csv"
+file-types = ["csv"]
+language-servers = ["csv-lsp"]
+
+[[language]]
+name = "tsv"
+scope = "text.tsc"
+file-types = ["tsv"]
+language-servers = ["csv-lsp"]
+
+# --- YAML ---
+[language-server.yaml-language-server]
+command = "yaml-language-server"
+args = ["--stdio"]
+config = { yaml = { schemas = { "https://json.schemastore.org/composer.json" = "composer.json" }, validate = true, completion = true } }
+
+[[language]]
+name = "yaml"
+scope = "source.yaml"
+file-types = ["yaml", "yml"]
+language-servers = ["yaml-language-server"]
+indent = { tab-width = 2, unit = "  " }
+
+# --- TOML ---
+[language-server.taplo]
+command = "taplo"
+args = ["lsp", "stdio"]
+
+[[language]]
+name = "toml"
+scope = "source.toml"
+file-types = ["toml"]
+language-servers = ["taplo"]
+indent = {tab-width = 2, unit = "  "}
+
+# --- Kotlin ---
+[language-server.kotlin-language-server]
+command = "kotlin-language-server"
+
+[[language]]
+name = "kotlin"
+scope = "source.kotlin"
+file-types = ["kt", "kts"]
+language-servers = ["kotlin-language-server"]
+indent = { tab-width = 4, unit = "    " }
+
+# --- TypeScript / React (TSX / JSX) ---
+[language-server.typescript-language-server]
+command = "typescript-language-server"
+args = ["--stdio"]
+config = { provideFormatter = true }
+
+[[language]]
+name = "jsx"
+scope = "source.jsx"
+file-types = ["jsx"]
+language-servers = ["typescript-language-server"]
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "tsx"
+scope = "source.tsx"
+file-types = ["tsx"]
+language-servers = ["typescript-language-server"]
+indent = { tab-width = 2, unit = "  " }
+
+# --- Dart ---
+[language-server.dart]
+command = "dart"
+args = ["language-server", "--protocol=lsp"]
+
+[[language]]
+name = "dart"
+scope = "source.dart"
+file-types = ["dart"]
+language-servers = ["dart"]
+indent = { tab-width = 2, unit = "  " }
