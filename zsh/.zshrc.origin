@@ -20,16 +20,17 @@ fi
 
 # ===== PATH 集中管理 =====
 # path 陣列與 PATH 連動；typeset -U 自動去除重複項（重複 source 也不會疊加）。
-# 每個目錄後綴 (N-/)：N 找不到就當空的、- 跟隨符號連結、/ 只收資料夾，
-# 所以不存在的目錄會自動略過，不必一個個寫 if。靠前的優先。
+# 只把實際存在的目錄加到最前面（靠前的優先）。刻意不用 glob qualifier (N-/)：
+# 那寫法在 bareglobqual 關閉的狀態（例如 ksh 模擬）下 source 會報 bad pattern。
 export GOPATH="${GOPATH:-$HOME/go}"
 typeset -U path PATH
-path=(
-  $HOME/.local/bin(N-/)      # 本地安裝的執行檔（starship、fd 連結…）
-  /usr/local/go/bin(N-/)     # go 本體（scripts/install_go.sh 裝到這）
-  $GOPATH/bin(N-/)           # go install 裝的工具（gopls、dlv…）
-  $path
-)
+# .local/bin：本地執行檔（starship、fd…）/usr/local/go/bin：go 本體/$GOPATH/bin：go install 的工具
+typeset -a _add
+for _dir in "$HOME/.local/bin" /usr/local/go/bin "$GOPATH/bin"; do
+  [[ -d $_dir ]] && _add+=($_dir)
+done
+path=($_add $path)
+unset _dir _add
 
 # ===== 補全（cd 提示的關鍵）=====
 autoload -Uz compinit
