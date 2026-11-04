@@ -7,6 +7,30 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 
+# ===== ssh-agent（固定 socket，所有終端機共用一個 agent）=====
+# 指到固定路徑，開任何終端機都用同一個 agent，密碼整個登入階段只要打一次。
+# ssh-add -l 的離開碼：0 有金鑰、1 agent 在但沒金鑰、2 連不到 agent。
+# 只有連不到（2）時才重開，避免把已在跑、只是還沒載入金鑰的 agent 砍掉。
+export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+ssh-add -l &>/dev/null
+if [ $? -eq 2 ]; then
+  rm -f "$SSH_AUTH_SOCK"
+  eval "$(ssh-agent -a "$SSH_AUTH_SOCK")" >/dev/null
+fi
+
+# ===== PATH 集中管理 =====
+# path 陣列與 PATH 連動；typeset -U 自動去除重複項（重複 source 也不會疊加）。
+# 每個目錄後綴 (N-/)：N 找不到就當空的、- 跟隨符號連結、/ 只收資料夾，
+# 所以不存在的目錄會自動略過，不必一個個寫 if。靠前的優先。
+export GOPATH="${GOPATH:-$HOME/go}"
+typeset -U path PATH
+path=(
+  $HOME/.local/bin(N-/)      # 本地安裝的執行檔（starship、fd 連結…）
+  /usr/local/go/bin(N-/)     # go 本體（scripts/install_go.sh 裝到這）
+  $GOPATH/bin(N-/)           # go install 裝的工具（gopls、dlv…）
+  $path
+)
+
 # ===== 補全（cd 提示的關鍵）=====
 autoload -Uz compinit
 compinit -C                    # -C 加快啟動速度
@@ -104,7 +128,17 @@ bindkey -M vicmd '^[^?' vi-backward-kill-word
 bindkey -M viins '^[[Z' reverse-menu-complete
 
 # ===== 常用 alias =====
-alias ll='ls -lah --color=auto'
+# ls 預設不上色，要自己加旗標或設 alias。有 eza 就換 eza（本身就帶色）。
+if command -v eza &>/dev/null; then
+  alias ls='eza --group-directories-first'
+  alias ll='eza -lah --group-directories-first --git'
+elif ls --version &>/dev/null; then   # GNU ls（Linux）
+  alias ls='ls --color=auto'
+  alias ll='ls -lah --color=auto'
+else                                   # BSD ls（macOS）
+  alias ls='ls -G'
+  alias ll='ls -lahG'
+fi
 alias gs='git status'
 alias gd='git diff'
 alias gl='git log --oneline --graph -15'
