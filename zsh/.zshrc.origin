@@ -25,6 +25,8 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Autosuggestions 設定（灰色提示）
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+# history 不看當前目錄，cd 改用 completion 才會依當前目錄提示
+ZSH_AUTOSUGGEST_HISTORY_IGNORE='cd *'
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 
 # ===== 按鍵綁定 =====
