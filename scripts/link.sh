@@ -151,7 +151,7 @@ link_one() {
   local state bak
 
   if [ ! -e "$source" ]; then
-    warn "跳過 $id：來源不存在 $(tilde "$source")"
+    warn "跳過 ${id}：來源不存在 $(tilde "$source")"
     SKIPPED=$((SKIPPED + 1))
     return 0
   fi
@@ -159,13 +159,13 @@ link_one() {
   state="$(target_state "$target")"
   case "$state" in
     link:"$source")
-      log "已連結 $id，略過：$(tilde "$target")"
+      log "已連結 ${id}，略過：$(tilde "$target")"
       SKIPPED=$((SKIPPED + 1))
       return 0
       ;;
     link:*)
       # 指到別處或斷掉的連結：移除重建，symlink 沒有資料不必備份。
-      log "重新指向 $id：$(tilde "$target") → $(tilde "$source")（原本指向 ${state#link:}）"
+      log "重新指向 ${id}：$(tilde "$target") → $(tilde "$source")（原本指向 ${state#link:}）"
       if [ "$DRY_RUN" -eq 0 ]; then
         rm -f "$target"
         ln -s "$source" "$target"
@@ -175,7 +175,7 @@ link_one() {
       ;;
     real)
       bak="$target.bak.$(date +%Y%m%d%H%M%S)"
-      log "備份並連結 $id：$(tilde "$target") → 備份到 $(tilde "$bak")，再連到 $(tilde "$source")"
+      log "備份並連結 ${id}：$(tilde "$target") → 備份到 $(tilde "$bak")，再連到 $(tilde "$source")"
       if [ "$DRY_RUN" -eq 0 ]; then
         mkdir -p "$(dirname "$target")"
         mv "$target" "$bak"
@@ -185,7 +185,7 @@ link_one() {
       return 0
       ;;
     none)
-      log "建立連結 $id：$(tilde "$target") → $(tilde "$source")"
+      log "建立連結 ${id}：$(tilde "$target") → $(tilde "$source")"
       if [ "$DRY_RUN" -eq 0 ]; then
         mkdir -p "$(dirname "$target")"
         ln -s "$source" "$target"
@@ -265,7 +265,7 @@ main() {
   if [ "${#names[@]}" -gt 0 ]; then
     for name in "${names[@]}"; do
       if ! i="$(index_of "$name")"; then
-        die "未知項目: $name（見 --list）"
+        die "未知項目: ${name}（見 --list）"
       fi
       link_one "$i"
     done
@@ -276,9 +276,9 @@ main() {
   fi
 
   if [ "$DRY_RUN" -eq 1 ]; then
-    log "完成（dry-run，沒有真的動檔案）。建立 $CREATED、重新指向 $RELINKED、備份並連結 $BACKED、略過 $SKIPPED。"
+    log "完成（dry-run，沒有真的動檔案）。建立 ${CREATED}、重新指向 ${RELINKED}、備份並連結 ${BACKED}、略過 ${SKIPPED}。"
   else
-    log "完成。建立 $CREATED、重新指向 $RELINKED、備份並連結 $BACKED、略過 $SKIPPED。"
+    log "完成。建立 ${CREATED}、重新指向 ${RELINKED}、備份並連結 ${BACKED}、略過 ${SKIPPED}。"
   fi
   if [ "$BACKED" -gt 0 ]; then
     log "被取代的實體檔已備份成 <目標>.bak.<時間戳>，確認無誤後可自行刪除。"
