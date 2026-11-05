@@ -39,7 +39,7 @@ decorations_theme_variant = "Dark"
 resize_increments = true
 # "Normal" | "AlwaysOnTop"
 level = "Normal"
-# option_as_alt = "None"  # macOS only
+option_as_alt = "OnlyLeft"  # macOS only
 
 # ---------------------------------------------------------------------------
 # Scrolling
