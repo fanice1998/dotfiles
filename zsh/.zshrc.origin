@@ -7,6 +7,14 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 
+# ===== 語系（locale）=====
+# 終端機/系統常帶進殘缺的 LC_CTYPE=UTF-8（不是完整 locale 名稱）。bash 3.2 無法
+# 解析它、退回 C ctype 後就看不到多位元組邊界，CJK 標點旁的 $var 展開會把位元組
+# 吃進變數名（例：$id：→ id\xef），在 set -u 下變成 unbound variable。這裡設成
+# 完整 UTF-8 locale，並清掉會蓋過 LANG 的殘缺變數，讓所有子行程都繼承正確語系。
+export LANG=zh_TW.UTF-8
+unset LC_ALL LC_CTYPE
+
 # ===== ssh-agent（固定 socket，所有終端機共用一個 agent）=====
 # 指到固定路徑，開任何終端機都用同一個 agent，密碼整個登入階段只要打一次。
 # ssh-add -l 的離開碼：0 有金鑰、1 agent 在但沒金鑰、2 連不到 agent。
