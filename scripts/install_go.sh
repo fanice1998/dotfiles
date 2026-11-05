@@ -11,7 +11,14 @@ set -euo pipefail
 
 if [ "$(id -u)" -eq 0 ] && [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != "root" ]; then
     owner="$SUDO_USER"
+    # Linux 看 /etc/passwd。macOS 的本地使用者多半只在 Directory Services。
     owner_home="$(awk -F: -v u="$SUDO_USER" '$1==u {print $6; exit}' /etc/passwd)"
+    if [ -z "$owner_home" ] && command -v dscacheutil >/dev/null 2>&1; then
+        owner_home="$(dscacheutil -q user -a name "$SUDO_USER" | awk '/^dir: / {print $2; exit}')"
+    fi
+    if [ -z "$owner_home" ] && command -v getent >/dev/null 2>&1; then
+        owner_home="$(getent passwd "$SUDO_USER" | awk -F: '{print $6; exit}')"
+    fi
 else
     owner="$(id -un)"
     owner_home="$HOME"
@@ -39,6 +46,24 @@ elevate() {
     fi
 }
 
+# GNU stat 用 -c；macOS 的 BSD stat 用 -f。
+file_owner() {
+    if [ "$(uname -s)" = "Darwin" ]; then
+        stat -f '%Su' "$1"
+    else
+        stat -c '%U' "$1"
+    fi
+}
+
+case "$(uname -s)" in
+    Linux) goos=linux ;;
+    Darwin) goos=darwin ;;
+    *)
+        echo "❌ 不支援的系統：$(uname -s)"
+        exit 1
+        ;;
+esac
+
 case "$(uname -m)" in
     x86_64|amd64) goarch=amd64 ;;
     aarch64|arm64) goarch=arm64 ;;
@@ -57,12 +82,17 @@ echo "📡 正在取得最新版本號..."
 version_text="$(curl -fsSL https://go.dev/VERSION?m=text)"
 version="${version_text%%$'\n'*}"
 version="${version%%$'\r'*}"
-echo "✅ 最新版本：${version}（linux-${goarch}）"
+echo "✅ 最新版本：${version}（${goos}-${goarch}）"
 
-filename="${version}.linux-${goarch}.tar.gz"
+filename="${version}.${goos}-${goarch}.tar.gz"
 download_url="https://go.dev/dl/${filename}"
 workdir="$(mktemp -d)"
 trap 'rm -rf "$workdir"' EXIT
+
+# 先下載到暫存目錄。失敗時保留原本的 /usr/local/go，
+# 也不在目前目錄留下 root 擁有的壓縮檔。
+echo "⬇️  下載中：${download_url}"
+curl -fL "$download_url" -o "${workdir}/${filename}"
 
 # 移除舊版 Go（目錄在但不在 PATH 上時也要清掉）
 if [ -d /usr/local/go ]; then
@@ -71,14 +101,10 @@ if [ -d /usr/local/go ]; then
     elevate rm -rf /usr/local/go
 fi
 
-# 下載到暫存目錄，避免在目前目錄留下 root 擁有的壓縮檔
-echo "⬇️  下載中：${download_url}"
-curl -fL "$download_url" -o "${workdir}/${filename}"
-
 echo "📦 解壓縮到 /usr/local/go ..."
 elevate tar -C /usr/local -xzf "${workdir}/${filename}"
 
-go_owner="$(stat -c '%U' /usr/local/go)"
+go_owner="$(file_owner /usr/local/go)"
 if [ "$go_owner" != "$owner" ]; then
     echo "🔧 將 /usr/local/go 擁有者改為 ${owner} ..."
     elevate chown -R "${owner}:$(id -gn "$owner")" /usr/local/go
@@ -114,8 +140,16 @@ export PATH="/usr/local/go/bin:${PATH}"
 
 echo ""
 echo "🎉 安裝完成！"
-go version
+if ! go version; then
+    echo "❌ /usr/local/go/bin/go 無法在這個系統執行"
+    exit 1
+fi
 
 echo ""
-echo "✅ 請重新開啟終端機，或執行：source ${owner_home}/.bashrc"
+reload_rc="${owner_home}/.bashrc"
+current_shell="${SHELL:-}"
+if [ "${current_shell##*/}" = "zsh" ] && [ -f "${owner_home}/.zshrc" ]; then
+    reload_rc="${owner_home}/.zshrc"
+fi
+echo "✅ 請重新開啟終端機，或執行：source ${reload_rc}"
 echo "   之後就可以直接使用 go 指令了！"
