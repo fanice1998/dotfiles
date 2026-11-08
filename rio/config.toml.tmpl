@@ -414,6 +414,38 @@ blinking-interval = 1000
 visual = false
 audio = false
 
+# 配色：sonokai（dark）。色值對應 colors/sonokai.toml（手動參照的單一真實來源）。
+# background 會套用 [window]/[platform] 的 opacity，在玻璃上形成 sonokai 底色。
+[colors]
+background = "#2c2e34"            # bg0
+foreground = "#e2e2e3"            # fg
+cursor     = "#e2e2e3"            # fg
+selection-background = "#414550"  # bg4
+selection-foreground = "#e2e2e3"  # fg
+# 分頁 / 分割
+tabs         = "#363944"          # bg2
+tabs-active  = "#9ed072"          # green
+split        = "#414550"          # bg4
+split-active = "#76cce0"          # blue
+# ANSI normal 0–7
+black   = "#181819"
+red     = "#fc5d7c"
+green   = "#9ed072"
+yellow  = "#e7c664"
+blue    = "#76cce0"
+magenta = "#b39df3"
+cyan    = "#8dd0b6"
+white   = "#e2e2e3"
+# ANSI bright 8–15（bright-black = grey，其餘沿用 normal）
+light-black   = "#7f8490"
+light-red     = "#fc5d7c"
+light-green   = "#9ed072"
+light-yellow  = "#e7c664"
+light-blue    = "#76cce0"
+light-magenta = "#b39df3"
+light-cyan    = "#8dd0b6"
+light-white   = "#e2e2e3"
+
 [developer]
 log-level = "OFF"
 enable-log-file = false
