@@ -142,6 +142,7 @@ fd|files|1|fd|fd|fd-find|fd-find|fd|快速找檔案
 bat|files|1|bat|bat|bat|bat|bat|帶語法高亮的 cat
 jq|files|1|jq|jq|jq|jq|jq|處理 JSON
 neovim|edit|1|nvim|neovim|neovim|-|neovim|編輯器（EDITOR=nvim）
+mitos|edit|0|ms|-|-|-|none|編輯器 Mitos（Helix fork，官方 installer 裝 ms）
 zellij|edit|1|zellij|zellij|-|-|zellij|終端機工作區
 fastfetch|edit|1|fastfetch|fastfetch|fastfetch|-|fastfetch|系統資訊
 lazygit|edit|1|lazygit|lazygit|lazygit|-|lazygit|git 的終端介面
@@ -328,6 +329,7 @@ special_label() {
     fedora:starship | debian:starship) printf '%s\n' "官方安裝腳本 → ~/.local/bin" ;;
     fedora:zellij | debian:zellij) printf '%s\n' "GitHub 最新版 → ~/.local/bin" ;;
     debian:neovim) printf '%s\n' "GitHub 最新版 → ~/.local/opt/nvim（apt 版本太舊）" ;;
+    macos:mitos | fedora:mitos | debian:mitos) printf '%s\n' "官方 installer（mitos.computer）→ ms" ;;
     debian:eza | debian:fastfetch | debian:lazygit) printf '%s\n' "apt 有就用 apt，沒有用 GitHub 最新版" ;;
     fedora:go | debian:go) printf '%s\n' "scripts/install_go.sh" ;;
     macos:rust | fedora:rust | debian:rust) printf '%s\n' "rustup" ;;
@@ -397,6 +399,7 @@ usage() {
   starship   Fedora / Debian：官方腳本裝到 ~/.local/bin
   zellij     Fedora / Debian：GitHub 最新版（發行版套件較舊或沒有）裝到 ~/.local/bin
   neovim     Debian：GitHub 最新版裝到 ~/.local/opt/nvim（apt 版本低於 LazyVim 要求的 0.11）
+  mitos      各平台：官方 installer（curl mitos.computer/install.sh）裝 ms（Helix fork）
   eza        Debian：apt 有就用 apt（Debian 13、Ubuntu 24.04），沒有用 GitHub 最新版
   fastfetch  Debian：apt 有就用 apt，沒有用 GitHub 的 .deb
   lazygit    Debian：apt 有就用 apt，沒有用 GitHub 最新版
@@ -407,7 +410,6 @@ usage() {
   fisher     各平台：官方 fisher.fish，再裝 fish_plugins 列的外掛。沒有 fish 會一併裝。
              設定目錄裡已有、但不是 fisher 裝的外掛檔案，會先移到 fisher-backup-*/ 再重裝
 
-Helix Steel 不是發行版套件，請用 ../helix/install.sh。
 Zellij 狀態列插件請用 ../zellij/install.sh。
 
 環境變數:
@@ -925,7 +927,7 @@ ensure_deps_for_specials() {
   for sidx in "${SPECIAL_IDX[@]}"; do
     id="${IDS[$sidx]}"
     case "$id" in
-      starship | zellij | neovim | eza | fastfetch | lazygit | go | rust | node) need_curl=1 ;;
+      starship | zellij | neovim | eza | fastfetch | lazygit | go | rust | node | mitos) need_curl=1 ;;
       fisher)
         need_curl=1
         need_fish=1
@@ -1166,6 +1168,17 @@ install_starship() {
   curl -fsSL https://starship.rs/install.sh | sh -s -- "${args[@]}"
 }
 
+# Mitos 編輯器（Helix fork）。沒有發行版套件，用官方 installer，執行檔叫 ms。
+install_mitos() {
+  log "安裝 Mitos 編輯器（ms）"
+  if [ "$DRY_RUN" -eq 1 ]; then
+    log "dry-run: curl -fsSL https://mitos.computer/install.sh | sh"
+    return 0
+  fi
+  curl -fsSL https://mitos.computer/install.sh | sh
+  have ms || warn "Mitos 裝完後找不到 ms；可能要把安裝目錄加進 PATH，或開新的 shell 再試"
+}
+
 # 印出 x86_64 或 aarch64；其他架構沒有預編版本。
 linux_arch() {
   case "$(uname -m)" in
@@ -1386,6 +1399,7 @@ run_specials() {
       fedora:starship | debian:starship) install_starship ;;
       fedora:zellij | debian:zellij) install_zellij_release ;;
       debian:neovim) install_neovim_release ;;
+      macos:mitos | fedora:mitos | debian:mitos) install_mitos ;;
       debian:eza) install_eza_debian ;;
       debian:fastfetch) install_fastfetch_debian ;;
       debian:lazygit) install_lazygit_debian ;;

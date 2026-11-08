@@ -1,9 +1,0 @@
-# inherits = "gruvbox"
-# inherits = "heisenberg"
-# inherits = "kinda_nvim"
-inherits = "catppuccin_mocha"
-# 不設 bg，沿用終端背景（"none" 不是合法顏色）
-"ui.background" = { fg = "text" }
-"ui.text" = { fg = "text" }
-"ui.cursor" = { fg = "white", bg = "gray", modifiers = ["reversed"] }
-

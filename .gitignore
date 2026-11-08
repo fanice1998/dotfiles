@@ -3,3 +3,6 @@ fish/completions/
 
 # rio 的 config.toml 由 scripts/link.sh 從 config.toml.tmpl 依平台產生，不納版控
 rio/config.toml
+
+# Claude Code 專案本機設定，不納版控
+.claude/

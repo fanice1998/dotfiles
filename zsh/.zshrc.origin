@@ -159,9 +159,6 @@ alias gl='git log --oneline --graph -15'
 # Rust / cargo (hx, steel, forge, rust-analyzer)
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-# helix-steel runtime
-export HELIX_RUNTIME="${HELIX_RUNTIME:-/Users/fanice/src/helix/runtime}"
-
 # >>> grok installer >>>
 export PATH="$HOME/.grok/bin:$PATH"
 

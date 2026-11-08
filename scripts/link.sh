@@ -49,7 +49,6 @@ alacritty|.config/alacritty|alacritty
 fastfetch|.config/fastfetch|fastfetch
 fish|.config/fish|fish
 ghostty|.config/ghostty|ghostty
-helix|.config/helix|helix
 mitos|.config/mitos|mitos
 nvim|.config/nvim|nvim
 rio|.config/rio|rio
