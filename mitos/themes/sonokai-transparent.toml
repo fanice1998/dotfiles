@@ -2,8 +2,8 @@
 # 搭配半透明 / 液態玻璃終端機（例如 Rio opacity 0.85 + macos-glass-clear）。
 #
 # 繼承內建 sonokai，再把會蓋成「實心色塊」的背景清掉，讓終端機半透明背景透出來：
-# 主要編輯區 / 游標行 / statusline 全透明；選單、彈窗、help 等浮動 UI 保留底色以利
-# 閱讀（浮在透明畫面上才看得清楚）。想讓浮動 UI 也全透明，把對應行改成 = {} 即可。
+# 主要編輯區 / 游標行 / statusline 全透明；浮動 UI（Space+k 文件 popup、補全選單、
+# help、分隔框線）也去掉底色、只留前景色，整體跟著終端機玻璃透明。
 # 可用的顏色名沿用 sonokai 的 [palette]（fg / grey / grey_dim / blue / green / purple…）。
 inherits = "sonokai"
 
@@ -21,8 +21,12 @@ inherits = "sonokai"
 "ui.statusline.insert" = { fg = "green",  modifiers = ["bold"] }
 "ui.statusline.select" = { fg = "purple", modifiers = ["bold"] }
 
-# ── 以下保留底色以利閱讀（浮動 UI）；想全透明就改成 = {} ──
-# "ui.menu"   = { fg = "fg",   bg = "bg2" }
-# "ui.popup"  = { fg = "grey", bg = "bg2" }
-# "ui.help"   = { fg = "fg",   bg = "bg1" }
-# "ui.window" = { fg = "grey", bg = "bg0" }
+# ── 浮動 UI：全透明（去掉底色，只留前景色）──
+# Space+k 的 hover 文件用 ui.popup / ui.popup.info；補全選單 ui.menu；
+# 指令提示 ui.help；分隔框線 ui.window。選單「被選取」那列保留底色以利辨識。
+"ui.popup"       = { fg = "fg" }
+"ui.popup.info"  = { fg = "fg" }
+"ui.menu"        = { fg = "fg" }
+"ui.menu.selected" = { fg = "bg0", bg = "green" }
+"ui.help"        = { fg = "fg" }
+"ui.window"      = { fg = "grey" }
