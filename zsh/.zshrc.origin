@@ -151,3 +151,34 @@ fi
 alias gs='git status'
 alias gd='git diff'
 alias gl='git log --oneline --graph -15'
+
+# ===== 工具鏈 / Tooling =====
+# Go 由上面「PATH 集中管理」統一處理（/usr/local/go/bin 與 $GOPATH/bin 存在才加），
+# 不另外跑 `go env`，避免沒有 go 時報錯；GOROOT 交給 go 自行偵測。
+
+# Rust / cargo (hx, steel, forge, rust-analyzer)
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# helix-steel runtime
+export HELIX_RUNTIME="${HELIX_RUNTIME:-/Users/fanice/src/helix/runtime}"
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+
+# flutter SDK
+export PATH="$HOME/develop/flutter/bin:$PATH"
+
+# Android PATH
+export JAVA_HOME="$(/usr/libexec/java_home -v 17 2>/dev/null || echo /opt/homebrew/opt/openjdk@17)"
+export ANDROID_HOME="/opt/homebrew/share/android-commandlinetools"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
+
+# Added by cua-driver-rs installer — see https://github.com/trycua/cua
+export PATH="/Users/fanice/.local/bin:$PATH"
+
+# starship 提示字元（放最後，確保初始化時 PATH 已完整）
+eval "$(starship init zsh)"
