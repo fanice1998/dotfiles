@@ -1,0 +1,28 @@
+# sonokai-transparent — sonokai 配色 + 透明背景
+# 搭配半透明 / 液態玻璃終端機（例如 Rio opacity 0.85 + macos-glass-clear）。
+#
+# 繼承內建 sonokai，再把會蓋成「實心色塊」的背景清掉，讓終端機半透明背景透出來：
+# 主要編輯區 / 游標行 / statusline 全透明；選單、彈窗、help 等浮動 UI 保留底色以利
+# 閱讀（浮在透明畫面上才看得清楚）。想讓浮動 UI 也全透明，把對應行改成 = {} 即可。
+# 可用的顏色名沿用 sonokai 的 [palette]（fg / grey / grey_dim / blue / green / purple…）。
+inherits = "sonokai"
+
+# ── 主要編輯區：完全透明（讓終端機背景透出）──
+"ui.background" = {}
+
+# ── 游標所在行：不用實心底色（會破壞透明感），改用底線標示 ──
+"ui.cursorline.primary" = { underline = { color = "grey_dim", style = "line" } }
+
+# ── statusline：全透明（去掉底色，只留前景色）──
+"ui.statusline" = { fg = "fg" }
+"ui.statusline.inactive" = { fg = "grey" }
+# 模式指示（NOR/INS/SEL）改用前景色上色，不用實心色塊
+"ui.statusline.normal" = { fg = "blue",   modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "green",  modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "purple", modifiers = ["bold"] }
+
+# ── 以下保留底色以利閱讀（浮動 UI）；想全透明就改成 = {} ──
+# "ui.menu"   = { fg = "fg",   bg = "bg2" }
+# "ui.popup"  = { fg = "grey", bg = "bg2" }
+# "ui.help"   = { fg = "fg",   bg = "bg1" }
+# "ui.window" = { fg = "grey", bg = "bg0" }

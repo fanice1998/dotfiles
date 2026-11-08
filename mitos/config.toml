@@ -1,4 +1,4 @@
-theme = "transparent"
+theme = "sonokai-transparent"
 
 [editor]
 line-number = "relative"
