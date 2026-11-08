@@ -1,0 +1,69 @@
+# sonokai — dotfiles 共用調色來源（單一真實來源 / single source of truth）
+#
+# 這份檔案本身不被任何 app 讀取，純粹是「手動參照」用的色盤定義：
+# 日後要幫某個 app 套佈景時，就查這裡的 hex 貼進該 app 自己的設定格式。
+# 色值取自 mitos 內建 sonokai 主題的 [palette]（原作 sainnhe，授權 MIT）。
+#   來源：https://github.com/sainnhe/sonokai
+#
+# 變體：dark（sonokai 預設）。日後要加別的變體，另建 colors/<name>.toml 即可。
+
+name = "sonokai"
+variant = "dark"
+
+# ── 原始 sonokai 命名 → hex（跟主題 [palette] 一字不差）────────────────────
+[palette]
+black    = "#181819"
+bg_dim   = "#222327"
+bg0      = "#2c2e34"   # 主背景
+bg1      = "#33353f"
+bg2      = "#363944"
+bg3      = "#3b3e48"
+bg4      = "#414550"
+bg5      = "#444852"
+fg       = "#e2e2e3"   # 主前景
+grey     = "#7f8490"
+grey_dim = "#595f6f"
+red      = "#fc5d7c"
+orange   = "#f39660"
+yellow   = "#e7c664"
+green    = "#9ed072"
+cyan     = "#8dd0b6"
+blue     = "#76cce0"
+purple   = "#b39df3"
+# 區塊 / diff 底色
+bg_red      = "#ff6077"
+bg_green    = "#a7df78"
+bg_blue     = "#85d3f2"
+diff_red    = "#55393d"
+diff_green  = "#394634"
+diff_blue   = "#354157"
+diff_yellow = "#4e432f"
+
+# ── 終端機通用對應（大多數終端機設定需要的欄位）────────────────────────────
+[terminal]
+background = "#2c2e34"   # bg0
+foreground = "#e2e2e3"   # fg
+cursor     = "#e2e2e3"   # fg
+selection  = "#414550"   # bg4
+
+# ANSI 16 色，由 sonokai palette 對應而來（bright 沿用 normal，bright-black = grey）。
+# 各終端機（rio / alacritty / ghostty / wezterm…）就是填這 16 格 + 上面 bg/fg。
+[terminal.normal]
+black   = "#181819"
+red     = "#fc5d7c"
+green   = "#9ed072"
+yellow  = "#e7c664"
+blue    = "#76cce0"
+magenta = "#b39df3"   # purple
+cyan    = "#8dd0b6"
+white   = "#e2e2e3"   # fg
+
+[terminal.bright]
+black   = "#7f8490"   # grey
+red     = "#fc5d7c"
+green   = "#9ed072"
+yellow  = "#e7c664"
+blue    = "#76cce0"
+magenta = "#b39df3"
+cyan    = "#8dd0b6"
+white   = "#e2e2e3"
