@@ -1,0 +1,32 @@
+# transparent — 搭配半透明 / 液態玻璃終端機（例如 Rio opacity 0.65 + macos-glass-clear）
+#
+# 繼承 term16_dark：沿用 ANSI 16 色，顏色會跟著終端機調色盤走，和 Rio 一致。
+# term16_dark 的 ui.background 本來就是空的（透明），這裡再把其他會蓋成「實心黑/灰
+# 色塊」的元素清掉背景，讓透明背景透出來；statusline / 選單 / 彈窗則保留底色，
+# 以免浮在透明畫面上看不清楚。想要「全透明」就把對應行改成 = {}。
+inherits = "term16_dark"
+
+# ── 主要編輯區：完全透明（讓終端機背景透出）──
+"ui.background" = {}
+"ui.gutter" = {}
+"ui.gutter.selected" = {}
+
+# ── 虛擬文字 / 縮排線 / 空白符號：去掉黑底，只留前景色 ──
+"ui.virtual" = {}
+"ui.virtual.whitespace" = { fg = "gray" }
+"ui.virtual.indent-guide" = { fg = "gray" }
+"ui.virtual.inlay-hint" = { fg = "light-gray", modifiers = ["dim", "italic"] }
+"ui.virtual.wrap" = { fg = "gray" }
+
+# ── 游標所在行：不用實心底色（會破壞透明感），改用底線標示 ──
+"ui.cursorline.primary" = { underline = { color = "gray", style = "line" } }
+
+# ── 選取：保留灰底比較清楚；想更透明可改成 { modifiers = ["reversed"] } ──
+"ui.selection" = { bg = "gray" }
+
+# ── 以下保留底色以利閱讀（浮動 UI）。想全透明就改成 = {} ──
+# "ui.statusline"          = { fg = "light-gray", bg = "gray" }
+# "ui.statusline.inactive" = { bg = "black" }
+# "ui.menu"                = { fg = "light-gray", bg = "gray" }
+# "ui.popup"               = { bg = "black" }
+# "ui.help"                = { fg = "white", bg = "black" }
