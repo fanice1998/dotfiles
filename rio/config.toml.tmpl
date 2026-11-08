@@ -378,6 +378,12 @@
 # enable-log-file = false
 enable-scroll-bar = true
 
+# option-as-alt（僅 macOS）：讓 Option 當作 Alt/Meta 送出 escape 序列，
+# Option+方向鍵才能穩定做 word 移動。'both'=左右 Option 都當 Alt；
+# 代價是 Option 不能再打特殊字元（以 IME 打中文者幾乎無影響）。
+# 想保留右 Option 打特殊字元可改成 'left'。
+option-as-alt = 'both'
+
 # use-fork 是「根層級」選項（不屬於 [navigation]）。
 # macOS 預設是 spawn(=false)、Linux 預設是 fork(true)。
 # 設 false 時 shell 以 spawn 方式啟動；新分頁沿用路徑改由 navigation.current-working-directory 控制（預設 true）。
@@ -450,6 +456,11 @@ macos.window.blur = "macos-glass-clear"   # macOS 液態玻璃（其他平台維
 keys = [
   # ⌃⌘F 切換全螢幕（Rio 預設沒有綁全螢幕）
   { key = "f", with = "super | control", action = "ToggleFullscreen" },
+  # mac：Cmd+← = 行首(Home)、Cmd+→ = 行尾(End)。Rio 不會把 Cmd+方向鍵送給 shell，
+  # 這裡改送 Home/End 的 escape 序列，zsh 端已綁到 beginning/end-of-line。
+  # （會覆蓋 Rio 預設的 Super+←/→ 切換分頁。）
+  { key = "Left",  with = "super", esc = "\u001b[H" },
+  { key = "Right", with = "super", esc = "\u001b[F" },
 ]
 
 
