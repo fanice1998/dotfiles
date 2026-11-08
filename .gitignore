@@ -1,2 +1,5 @@
 # fish 自動產生的補全檔（grok、nvm… 工具自己寫入，機器相關，不納版控）
 fish/completions/
+
+# rio 的 config.toml 由 scripts/link.sh 從 config.toml.tmpl 依平台產生，不納版控
+rio/config.toml

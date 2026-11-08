@@ -378,6 +378,11 @@
 # enable-log-file = false
 enable-scroll-bar = true
 
+# use-fork 是「根層級」選項（不屬於 [navigation]）。
+# macOS 預設是 spawn(=false)、Linux 預設是 fork(true)。
+# 設 false 時 shell 以 spawn 方式啟動；新分頁沿用路徑改由 navigation.current-working-directory 控制（預設 true）。
+use-fork = false
+
 [window]
 opacity = 0.85
 blur = true
@@ -415,16 +420,21 @@ use-drawable-chars = true
 symbol-map = []
 disable-warnings-not-found = false
 additional-dirs = []
-extras = [{family = "等距更紗黑體 TC"}]
-# extras = [{family = "Sarasa Mono TC"}] # For mac
+# 字體家族名由 scripts/link.sh 依作業系統自動填入：
+#   macOS / Linux → "Sarasa Mono TC"（英文家族名）
+#   Windows       → "等距更紗黑體 TC"（繁中家族名）
+# 同一顆 SarasaMonoTC 字型檔內同時內建這兩個名稱。
+# 此檔為樣板（config.toml.tmpl），請勿直接編輯已產生的 ~/.config/rio/config.toml。
+extras = [{family = "@@SARASA_FAMILY@@"}]
 
 
 [navigation]
-# tab mode = [ "Bookmark", "Nativetab"(only mac), "BottomTab", "TopTab", "Plain"(Not display tab)]
-mode = "Bookmark"
+# mode（0.5.x 起）= [ "Tab", "NativeTab"（僅 mac）, "Plain"（不顯示分頁） ]
+# 舊版的 Bookmark / TopTab / BottomTab 已移除。
+mode = "Tab"
 use-split = true
 hide-if-single = true
-use-fork = false
+# current-working-directory = true  # 新分頁沿用目前路徑（舊名 use-current-path，新版預設即 true）
 unfocused-split-opacity = 0.65
 
 [platform]
@@ -433,6 +443,13 @@ unfocused-split-opacity = 0.65
 # windows.env-vars = ["WINDOWS_SPECIFIC=yes"]
 
 windows.window.opacity = 0.85
-macos.window.opacity = 0.75
+macos.window.opacity = 0.65
+macos.window.blur = "macos-glass-clear"   # macOS 液態玻璃（其他平台維持根層級的 blur = true）
+
+[bindings]
+keys = [
+  # ⌃⌘F 切換全螢幕（Rio 預設沒有綁全螢幕）
+  { key = "f", with = "super | control", action = "ToggleFullscreen" },
+]
 
 

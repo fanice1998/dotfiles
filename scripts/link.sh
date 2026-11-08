@@ -121,6 +121,13 @@ list_catalog() {
   printf '%-10s %-26s %s\n' "ID" "目標" "現況"
   printf '%-10s %-26s %s\n' "----------" "--------------------------" "----------"
   for i in "${!IDS[@]}"; do
+    if [ "${IDS[$i]}" = "rio" ]; then
+      src_exist=""
+      [ -e "$REPO_ROOT/rio/config.toml.tmpl" ] || src_exist="  [樣板不存在!]"
+      printf '%-10s %-26s %s%s\n' "rio" "$(tilde "${TARGETS[$i]}")" \
+        "產生式：config 由樣板產生，fonts/README 連結" "$src_exist"
+      continue
+    fi
     state="$(target_state "${TARGETS[$i]}")"
     case "$state" in
       none) state="（未連結）" ;;
@@ -144,9 +151,107 @@ RELINKED=0
 BACKED=0
 SKIPPED=0
 
+# rio 的字體家族名依作業系統而不同（同一顆字型檔內建兩個名稱）。
+rio_font_family() {
+  case "$(uname -s)" in
+    Darwin | Linux) printf '%s\n' "Sarasa Mono TC" ;;         # 英文家族名
+    MINGW* | MSYS* | CYGWIN* | Windows_NT) printf '%s\n' "等距更紗黑體 TC" ;; # 繁中家族名
+    *) printf '%s\n' "Sarasa Mono TC" ;;
+  esac
+}
+
+# 確保 dst 是指向 src 的 symlink；既有實體檔會先備份，指錯的 symlink 直接重建。
+ensure_symlink() {
+  local src="$1" dst="$2" label="$3" bak
+
+  if [ ! -e "$src" ]; then
+    warn "跳過 ${label}：來源不存在 $(tilde "$src")"
+    SKIPPED=$((SKIPPED + 1))
+    return 0
+  fi
+
+  if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+    log "已連結 ${label}，略過：$(tilde "$dst")"
+    SKIPPED=$((SKIPPED + 1))
+    return 0
+  fi
+
+  if [ -L "$dst" ]; then
+    log "重新指向 ${label}：$(tilde "$dst") → $(tilde "$src")"
+    if [ "$DRY_RUN" -eq 0 ]; then
+      rm -f "$dst"
+      ln -s "$src" "$dst"
+    fi
+    RELINKED=$((RELINKED + 1))
+    return 0
+  fi
+
+  if [ -e "$dst" ]; then
+    bak="$dst.bak.$(date +%Y%m%d%H%M%S)"
+    log "備份並連結 ${label}：$(tilde "$dst") → 備份到 $(tilde "$bak")"
+    if [ "$DRY_RUN" -eq 0 ]; then
+      mv "$dst" "$bak"
+      ln -s "$src" "$dst"
+    fi
+    BACKED=$((BACKED + 1))
+    return 0
+  fi
+
+  log "建立連結 ${label}：$(tilde "$dst") → $(tilde "$src")"
+  if [ "$DRY_RUN" -eq 0 ]; then
+    ln -s "$src" "$dst"
+  fi
+  CREATED=$((CREATED + 1))
+  return 0
+}
+
+# rio 特別處理：config.toml 由樣板依平台產生（真實檔），fonts/README 照舊 symlink。
+# （Rio 沒有 import/條件語法，字體家族名只能在連結階段依 OS 填入。）
+link_rio() {
+  local target="$HOME/.config/rio"
+  local srcdir="$REPO_ROOT/rio"
+  local tmpl="$srcdir/config.toml.tmpl"
+  local family
+  family="$(rio_font_family)"
+
+  if [ ! -e "$tmpl" ]; then
+    warn "跳過 rio：樣板不存在 $(tilde "$tmpl")"
+    SKIPPED=$((SKIPPED + 1))
+    return 0
+  fi
+
+  # 舊版是「整包目錄 symlink 指向 repo」；要放產生式 config 就得改成真實目錄。
+  if [ -L "$target" ]; then
+    log "rio: 目標原為整包 symlink，改成真實目錄：$(tilde "$target")"
+    if [ "$DRY_RUN" -eq 0 ]; then
+      rm -f "$target"
+    fi
+  fi
+  if [ "$DRY_RUN" -eq 0 ]; then
+    mkdir -p "$target"
+  fi
+
+  ensure_symlink "$srcdir/fonts" "$target/fonts" "rio/fonts"
+  ensure_symlink "$srcdir/README.md" "$target/README.md" "rio/README"
+
+  log "rio: 產生 config.toml（平台 $(uname -s)，字體 \"$family\"）：$(tilde "$target/config.toml")"
+  if [ "$DRY_RUN" -eq 0 ]; then
+    sed "s|@@SARASA_FAMILY@@|$family|g" "$tmpl" >"$target/config.toml"
+  fi
+  CREATED=$((CREATED + 1))
+  return 0
+}
+
 # 建立一個指向 source 的連結，必要時備份既有實體檔。
 link_one() {
   local i="$1"
+
+  # rio 走產生式流程（見 link_rio）。
+  if [ "${IDS[$i]}" = "rio" ]; then
+    link_rio
+    return 0
+  fi
+
   local target="${TARGETS[$i]}" source="${SOURCES[$i]}" id="${IDS[$i]}"
   local state bak
 
