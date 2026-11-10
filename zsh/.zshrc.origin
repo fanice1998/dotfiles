@@ -12,7 +12,14 @@ setopt HIST_REDUCE_BLANKS
 # 解析它、退回 C ctype 後就看不到多位元組邊界，CJK 標點旁的 $var 展開會把位元組
 # 吃進變數名（例：$id：→ id\xef），在 set -u 下變成 unbound variable。這裡設成
 # 完整 UTF-8 locale，並清掉會蓋過 LANG 的殘缺變數，讓所有子行程都繼承正確語系。
-export LANG=zh_TW.UTF-8
+# zh_TW.UTF-8 不存在時（例：Fedora 未裝 glibc-langpack-zh、Debian 未 locale-gen）
+# glibc 會整個退回 C 語系，zsh 會把中文當位元組處理（輸入/退格/補全錯位），
+# 所以先確認有裝，沒有就退到 C.UTF-8。
+if locale -a 2>/dev/null | grep -qiE '^zh_TW\.utf-?8$'; then
+  export LANG=zh_TW.UTF-8
+else
+  export LANG=C.UTF-8
+fi
 unset LC_ALL LC_CTYPE
 
 # ===== ssh-agent（固定 socket，所有終端機共用一個 agent）=====
