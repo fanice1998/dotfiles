@@ -157,5 +157,9 @@ autoload -Uz compinit && compinit -C
 # Added by cua-driver-rs installer — see https://github.com/trycua/cua
 export PATH="/Users/fanice/.local/bin:$PATH"
 
+# zig zvm（Zig 版本管理器）
+export ZVM_INSTALL="$HOME/.zvm"
+export PATH="$ZVM_INSTALL/bin:$PATH"
+
 # starship 提示字元（放最後，確保初始化時 PATH 已完整）
 eval "$(starship init zsh)"
