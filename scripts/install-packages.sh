@@ -15,7 +15,7 @@
 # 新增項目時改下面的 CATALOG。欄位用 | 分隔:
 #   id|群組|預設(1/0)|檢查的指令|mac|fedora|debian|termux|說明
 # debian 欄給 Debian、Ubuntu，以及 ID_LIKE 是它們的發行版（Linux Mint、Pop!_OS…）。
-# 預設不含 alacritty、fish、fisher、python、go、rust、node、make、cmake。
+# 預設不含 lazygit、alacritty、fish、fisher、python、go、rust、node、make、cmake。
 # 平台欄位:
 #   套件名稱（可多個，空白分隔）
 #   cask:名稱     只給 macOS，走 brew install --cask
@@ -145,7 +145,7 @@ neovim|edit|1|nvim|neovim|neovim|-|neovim|編輯器（EDITOR=nvim）
 mitos|edit|0|ms|-|-|-|none|編輯器 Mitos（Helix fork，官方 installer 裝 ms）
 zellij|edit|1|zellij|zellij|-|-|zellij|終端機工作區
 fastfetch|edit|1|fastfetch|fastfetch|fastfetch|-|fastfetch|系統資訊
-lazygit|edit|1|lazygit|lazygit|lazygit|-|lazygit|git 的終端介面
+lazygit|edit|0|lazygit|lazygit|lazygit|-|lazygit|git 的終端介面
 alacritty|edit|0|alacritty|cask:alacritty|alacritty|alacritty|none|終端機（repo 裡有設定）
 python|lang|0|python3|python|python3 python3-pip|python3 python3-pip python3-venv|python python-pip|Python 3 與 pip
 go|lang|0|go|go|-|-|golang|Go（Linux 走 scripts/install_go.sh）
@@ -385,7 +385,7 @@ usage() {
   q           取消
 
 預設（--default，或清單裡按 a）不含:
-  alacritty、fish、fisher、python、go、rust、node、make、cmake
+  lazygit、alacritty、fish、fisher、python、go、rust、node、make、cmake
   另外也不含 rsync、compiler、pkg-config。這些在清單裡照樣可以勾。
 
 平台:
