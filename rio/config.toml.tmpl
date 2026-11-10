@@ -391,9 +391,13 @@ use-fork = false
 
 [window]
 opacity = 0.85
-blur = true
+blur = @@BLUR@@  # 由 link.sh 填入：Windows=false、其他=true
 decorations = "Enabled"
 windows-corner-preference = "Round"
+
+# use-cpu 由 link.sh 填入：Windows=true（軟體渲染）、其他=false
+[renderer]
+use-cpu = @@USE_CPU@@
 
 # [window-background-image]
 # path = "image path"
@@ -417,7 +421,7 @@ audio = false
 # 配色：sonokai（dark）。色值對應 colors/sonokai.toml（手動參照的單一真實來源）。
 # background 會套用 [window]/[platform] 的 opacity，在玻璃上形成 sonokai 底色。
 [colors]
-background = "#2c2e34"            # bg0
+background = "@@BG@@"             # 由 link.sh 填入：Windows=#1c1d21（較深）、其他=#2c2e34（bg0）
 foreground = "#e2e2e3"            # fg
 cursor     = "#e2e2e3"            # fg
 selection-background = "#414550"  # bg4
