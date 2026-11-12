@@ -389,6 +389,12 @@ option-as-alt = 'both'
 # 設 false 時 shell 以 spawn 方式啟動；新分頁沿用路徑改由 navigation.current-working-directory 控制（預設 true）。
 use-fork = false
 
+# 遠端通常沒有 rio terminfo。zsh 的 ZLE 會拿它重畫輸入列，找不到時打字就亂碼；
+# bash 的 readline 較不受影響。跟 Alacritty 一樣改送遠端一定有的 xterm-256color。
+# Rio 仍會自設 COLORTERM=truecolor，真彩色不受影響。
+# 必須放在第一個 [table] 之前，否則 Rio 會忽略這個無標頭選項。
+env-vars = ["TERM=xterm-256color"]
+
 [window]
 opacity = 0.85
 blur = @@BLUR@@  # 由 link.sh 填入：Windows=false、其他=true

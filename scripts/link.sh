@@ -260,7 +260,7 @@ link_rio() {
   ensure_symlink "$srcdir/fonts" "$target/fonts" "rio/fonts"
   ensure_symlink "$srcdir/README.md" "$target/README.md" "rio/README"
 
-  log "rio: 產生 config.toml（平台 $kind）：$(tilde "$target/config.toml")"
+  log "rio: 產生 config.toml（平台 ${kind}）：$(tilde "$target/config.toml")"
   if [ "$DRY_RUN" -eq 0 ]; then
     render_rio_config "$kind" "$tmpl" "$target/config.toml"
   fi
