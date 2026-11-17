@@ -1,5 +1,19 @@
 #!/bin/zsh
 
+# 僅允許 zsh 執行：shebang 只在直接執行時生效，若被 bash/sh 呼叫則在此攔下
+if [ -z "${ZSH_VERSION:-}" ]; then
+  echo "錯誤：install_plugin.sh 必須使用 zsh 執行。" >&2
+  if command -v zsh >/dev/null 2>&1; then
+    echo "請改用：zsh $0" >&2
+  else
+    echo "系統尚未安裝 zsh，請先安裝，例如：" >&2
+    echo "  Debian/Ubuntu: sudo apt install zsh" >&2
+    echo "  Fedora:        sudo dnf install zsh" >&2
+    echo "  macOS:         brew install zsh" >&2
+  fi
+  exit 1
+fi
+
 # Tips about text history
 if [ ! -d ~/.zsh/fzf-tab ]; then
   git clone https://github.com/Aloxaf/fzf-tab ~/.zsh/fzf-tab
